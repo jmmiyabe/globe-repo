@@ -1,11 +1,43 @@
-"use client"
+"use client";
 
-import { Phone, MapPin, AlertCircle, Calendar, Briefcase, Siren } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { StatusBadge } from "./status-badge"
+import {
+  Phone,
+  MapPin,
+  AlertCircle,
+  Calendar,
+  Briefcase,
+  Siren,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "./status-badge";
+import { useState } from "react";
 
 export function CitizenHub() {
+  const [callStatus, setCallStatus] = useState("");
+  const [shelterModal, setShelterModal] = useState(false);
+  const [selectedService, setSelectedService] = useState("");
+
+  const handleCall = (number: string, service: string) => {
+    setCallStatus(`Calling ${service} at ${number}...`);
+    setTimeout(() => setCallStatus(""), 3000);
+  };
+
+  const handleViewShelters = () => {
+    setShelterModal(true);
+    setTimeout(() => setShelterModal(false), 5000);
+  };
+
+  const handleServiceAction = (service: string) => {
+    setSelectedService(service);
+    setTimeout(() => setSelectedService(""), 3000);
+  };
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
@@ -13,10 +45,13 @@ export function CitizenHub() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Siren className="h-8 w-8 text-secondary" />
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground">Community Hub</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+              Community Hub
+            </h1>
           </div>
           <p className="text-muted-foreground">
-            Your central hub for emergency services, alerts, and community information
+            Your central hub for emergency services, alerts, and community
+            information
           </p>
         </div>
 
@@ -31,11 +66,17 @@ export function CitizenHub() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground gap-2 h-10">
+              <Button
+                onClick={() => handleCall("911", "Emergency Services")}
+                className="w-full bg-accent hover:bg-accent/90 text-accent-foreground gap-2 h-10"
+                title="Call 911 for immediate emergency assistance - Available 24/7"
+              >
                 <Phone className="h-4 w-4" />
-                CALL 111
+                CALL 911
               </Button>
-              <p className="text-xs text-muted-foreground text-center">Fire • Police • Medical</p>
+              <p className="text-xs text-muted-foreground text-center">
+                Fire • Police • Medical
+              </p>
             </CardContent>
           </Card>
 
@@ -49,10 +90,25 @@ export function CitizenHub() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-secondary mb-2">450/600</p>
-              <p className="text-xs text-muted-foreground">Shelters available</p>
-              <Button size="sm" className="w-full mt-2 bg-secondary hover:bg-secondary/90">
+              <p className="text-xs text-muted-foreground">
+                Shelters available
+              </p>
+              <Button
+                size="sm"
+                onClick={handleViewShelters}
+                className="w-full mt-2 bg-secondary hover:bg-secondary/90"
+                title="View available evacuation centers with capacity and location details"
+              >
                 View Shelters
               </Button>
+              {shelterModal && (
+                <div className="mt-2 p-2 bg-secondary/20 rounded text-xs">
+                  <p className="font-semibold">Available Shelters:</p>
+                  <p>• Pasay City Sports Complex (150/200)</p>
+                  <p>• Cuneta Astrodome (200/250)</p>
+                  <p>• Villamor Elem. School (100/150)</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -65,41 +121,70 @@ export function CitizenHub() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <StatusBadge level="caution" label="ALERT ACTIVE" />
-              <p className="text-xs text-muted-foreground mt-2">Check latest updates and advisories</p>
+              <StatusBadge level="warning" label="ALERT ACTIVE" />
+              <p className="text-xs text-muted-foreground mt-2">
+                Check latest updates and advisories
+              </p>
             </CardContent>
           </Card>
         </div>
 
         {/* Quick Links Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          {/* LGU Hotline */}
+          {/* Pasay Emergency Hotlines */}
           <Card className="bg-card border-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Phone className="h-5 w-5 text-secondary" />
-                LGU Hotline
+                Pasay Emergency Hotlines
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Main Emergency Line</p>
-                  <p className="text-2xl font-mono font-bold text-primary">1-1-1</p>
+                  <p className="text-xs text-muted-foreground mb-1">
+                    Pasay DRRM Office
+                  </p>
+                  <p className="text-lg font-mono font-bold text-primary">
+                    09054939111
+                  </p>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <p className="text-xs text-muted-foreground">Medical</p>
-                    <p className="font-mono text-sm font-semibold">1-123</p>
+                    <p className="text-xs text-muted-foreground">Fire Dept</p>
+                    <p className="font-mono text-sm font-semibold">
+                      117 / 831-4222
+                    </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Fire</p>
-                    <p className="font-mono text-sm font-semibold">1-124</p>
+                    <p className="text-xs text-muted-foreground">
+                      Pasay Police
+                    </p>
+                    <p className="font-mono text-sm font-semibold">834-4030</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">NDRRMC</p>
+                    <p className="font-mono text-sm font-semibold">8920-1911</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">
+                      Phil. Red Cross
+                    </p>
+                    <p className="font-mono text-sm font-semibold">143</p>
                   </div>
                 </div>
-                <Button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground">
+                <Button
+                  onClick={() => handleCall("09054939111", "Pasay DRRM Office")}
+                  className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                  title="Quick dial to Pasay DRRM Office for disaster and emergency concerns"
+                >
                   Call Now
                 </Button>
+                {callStatus && (
+                  <div className="mt-2 p-2 bg-secondary/20 rounded text-xs text-center font-semibold">
+                    {callStatus}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -111,18 +196,34 @@ export function CitizenHub() {
                 <MapPin className="h-5 w-5 text-secondary" />
                 Service Availability
               </CardTitle>
-              <CardDescription>Operating clinics and consultations</CardDescription>
+              <CardDescription>
+                Operating clinics and consultations
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {[
-                { name: "Community Clinic A", status: "operational", hours: "24/7" },
-                { name: "Medical Center B", status: "operational", hours: "08:00-20:00" },
-                { name: "Consultation Hub", status: "closed", hours: "Opens 06:00" },
+                {
+                  name: "Community Clinic A",
+                  status: "operational",
+                  hours: "24/7",
+                },
+                {
+                  name: "Medical Center B",
+                  status: "operational",
+                  hours: "08:00-20:00",
+                },
+                {
+                  name: "Consultation Hub",
+                  status: "closed",
+                  hours: "Opens 06:00",
+                },
               ].map((item, i) => (
                 <div key={i} className="flex items-center justify-between p-2">
                   <div>
                     <p className="text-sm font-medium">{item.name}</p>
-                    <p className="text-xs text-muted-foreground">{item.hours}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {item.hours}
+                    </p>
                   </div>
                   <StatusBadge
                     level={item.status === "operational" ? "safe" : "warning"}
@@ -136,53 +237,67 @@ export function CitizenHub() {
 
         {/* Community Info & Services */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-          {/* Ongoing Projects/Events */}
+          {/* Community Initiatives/Activities */}
           <Card className="bg-card border-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-secondary" />
-                Ongoing Projects & Events
+                Community Initiatives/Activities
               </CardTitle>
-              <CardDescription>Community initiatives and activities</CardDescription>
+              <CardDescription>
+                Local community programs and activities
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {[
-                { title: "Community Relief Distribution", date: "Today 14:00", type: "Relief" },
-                { title: "Free Health Screening", date: "Tomorrow 09:00", type: "Health" },
-                { title: "Infrastructure Repair Phase 1", date: "Next Week", type: "Project" },
+                { title: "Pageants", type: "Event" },
+                { title: "Zumba", type: "Fitness" },
+                { title: "Nutrition Month", type: "Health" },
+                { title: "Feeding Programs", type: "Welfare" },
+                { title: "Health Programs", type: "Health" },
+                { title: "Local Vegetable Planting", type: "Agriculture" },
               ].map((item, i) => (
-                <div key={i} className="p-3 bg-muted rounded-lg border border-border">
-                  <p className="text-sm font-semibold mb-1">{item.title}</p>
+                <div
+                  key={i}
+                  className="p-3 bg-muted rounded-lg border border-border"
+                >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">{item.date}</span>
-                    <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded">{item.type}</span>
+                    <p className="text-sm font-semibold">{item.title}</p>
+                    <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded">
+                      {item.type}
+                    </span>
                   </div>
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          {/* Crime Warnings */}
+          {/* Local Incidents */}
           <Card className="bg-card border-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertCircle className="h-5 w-5 text-accent" />
-                Crime & Safety Warnings
+                Local Incidents
               </CardTitle>
-              <CardDescription>Stay informed about local incidents</CardDescription>
+              <CardDescription>
+                Stay informed about local incidents
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {[
-                { area: "Downtown District", warning: "Increased activity reported", level: "warning" },
-                { area: "Park Area", warning: "Safe - Extra patrols active", level: "safe" },
-                { area: "Business Zone", warning: "Petty theft prevention campaign", level: "caution" },
+                { incident: "Flooding Casualties/Stranded", level: "critical" },
+                { incident: "Fire Spread", level: "critical" },
+                { incident: "Cat and Dog Populations", level: "warning" },
+                { incident: "Littering", level: "warning" },
               ].map((item, i) => (
-                <div key={i} className="p-3 bg-muted rounded-lg border border-border">
-                  <p className="text-sm font-semibold mb-1">{item.area}</p>
+                <div
+                  key={i}
+                  className="p-3 bg-muted rounded-lg border border-border"
+                >
                   <div className="flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground">{item.warning}</p>
+                    <p className="text-sm font-semibold">{item.incident}</p>
                     <StatusBadge
-                      level={item.level === "warning" ? "warning" : item.level === "safe" ? "safe" : "critical"}
+                      level={item.level as "warning" | "safe" | "critical"}
                       label={item.level.toUpperCase()}
                     />
                   </div>
@@ -196,26 +311,51 @@ export function CitizenHub() {
         <Card className="bg-card border-border">
           <CardHeader>
             <CardTitle>Community Services</CardTitle>
-            <CardDescription>Access local government services and programs</CardDescription>
+            <CardDescription>
+              Access local government services and programs
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-12">
+              <Button
+                onClick={() =>
+                  handleServiceAction("Connecting to LGU hotline...")
+                }
+                className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-12"
+                title="Contact Local Government Unit for inquiries and assistance"
+              >
                 <Phone className="h-4 w-4" />
                 CONTACT LGU
               </Button>
-              <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2 h-12">
+              <Button
+                onClick={() =>
+                  handleServiceAction("Opening event registration form...")
+                }
+                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2 h-12"
+                title="Register for community events like Zumba, Pageants, and Health Programs"
+              >
                 <Calendar className="h-4 w-4" />
                 REGISTER Event
               </Button>
-              <Button className="bg-accent hover:bg-accent/90 text-accent-foreground gap-2 h-12">
+              <Button
+                onClick={() =>
+                  handleServiceAction("Opening service booking portal...")
+                }
+                className="bg-accent hover:bg-accent/90 text-accent-foreground gap-2 h-12"
+                title="Book appointments for medical consultation, document processing, and more"
+              >
                 <Briefcase className="h-4 w-4" />
                 BOOK Local Service
               </Button>
             </div>
+            {selectedService && (
+              <div className="mt-3 p-3 bg-primary/20 rounded text-sm font-semibold text-center">
+                {selectedService}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }
