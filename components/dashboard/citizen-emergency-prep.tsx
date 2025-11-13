@@ -1,11 +1,49 @@
 "use client"
 
+import { useState } from "react"
 import { MapPin, AlertTriangle, Navigation, Users, Phone } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "./status-badge"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
 
 export function CitizenEmergencyPrep() {
+  const [openRouteModal, setOpenRouteModal] = useState<number | null>(null)
+
+  const routes = [
+    {
+      name: "Primary Route - North Exit",
+      description: "Main highway exit via main road",
+      status: "safe",
+      distance: "2.5 km",
+      time: "8-12 min",
+      map: "/samplemap.png",
+    },
+    {
+      name: "Secondary Route - East Bypass",
+      description: "Alternative route through residential area",
+      status: "safe",
+      distance: "3.2 km",
+      time: "10-15 min",
+      map: "/samplemap.png"
+    },
+    {
+      name: "Emergency Route - South Back Road",
+      description: "Local back roads for overflow traffic",
+      status: "caution",
+      distance: "4.1 km",
+      time: "12-18 min",
+      map: "/samplemap.png"
+    },
+  ]
+
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
@@ -28,29 +66,7 @@ export function CitizenEmergencyPrep() {
             <CardDescription>Recommended evacuation paths during emergencies</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {[
-              {
-                name: "Primary Route - North Exit",
-                description: "Main highway exit via main road",
-                status: "safe",
-                distance: "2.5 km",
-                time: "8-12 min",
-              },
-              {
-                name: "Secondary Route - East Bypass",
-                description: "Alternative route through residential area",
-                status: "safe",
-                distance: "3.2 km",
-                time: "10-15 min",
-              },
-              {
-                name: "Emergency Route - South Back Road",
-                description: "Local back roads for overflow traffic",
-                status: "caution",
-                distance: "4.1 km",
-                time: "12-18 min",
-              },
-            ].map((route, i) => (
+            {routes.map((route, i) => (
               <div key={i} className="p-4 bg-muted rounded-lg border border-border">
                 <div className="flex items-start justify-between mb-2">
                   <div>
@@ -71,7 +87,11 @@ export function CitizenEmergencyPrep() {
                     <span className="text-muted-foreground">Est. Time:</span>
                     <p className="font-semibold">{route.time}</p>
                   </div>
-                  <Button size="sm" className="bg-primary hover:bg-primary/90">
+                  <Button
+                    size="sm"
+                    className="bg-primary hover:bg-primary/90"
+                    onClick={() => setOpenRouteModal(i)}
+                  >
                     View Map
                   </Button>
                 </div>
@@ -134,38 +154,41 @@ export function CitizenEmergencyPrep() {
                 { service: "Police Non-Emergency", number: "115", description: "Police assistance" },
                 { service: "Disaster Management", number: "116", description: "Natural disaster support" },
               ].map((contact, i) => (
-                <div key={i} className="p-3 bg-muted rounded-lg border border-border">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="text-sm font-semibold">{contact.service}</p>
-                      <p className="text-xs text-muted-foreground">{contact.description}</p>
-                    </div>
-                    <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground font-mono">
-                      {contact.number}
-                    </Button>
+                <div key={i} className="p-3 bg-muted rounded-lg border border-border flex items-start justify-between">
+                  <div>
+                    <p className="text-sm font-semibold">{contact.service}</p>
+                    <p className="text-xs text-muted-foreground">{contact.description}</p>
                   </div>
+                  <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground font-mono">
+                    {contact.number}
+                  </Button>
                 </div>
               ))}
             </CardContent>
           </Card>
         </div>
-
-        {/* Action Buttons */}
-        <Card className="bg-card border-border">
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-12">
-                <Phone className="h-4 w-4" />
-                CONTACT Emergency Services
-              </Button>
-              <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2 h-12">
-                <MapPin className="h-4 w-4" />
-                Find Nearest Shelter
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
+
+      {/* MODAL for Route Map */}
+      <Dialog open={openRouteModal !== null} onOpenChange={() => setOpenRouteModal(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Route Map</DialogTitle>
+            <DialogDescription>
+              {openRouteModal !== null && (
+                <img
+                  src={routes[openRouteModal].map}
+                  alt={routes[openRouteModal].name}
+                  className="w-full rounded-lg"
+                />
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setOpenRouteModal(null)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
