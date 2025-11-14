@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Radio,
@@ -7,16 +7,16 @@ import {
   MapPin,
   Phone,
   Send,
-} from "lucide-react"
+} from "lucide-react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -24,23 +24,23 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { useState } from "react"
+} from "@/components/ui/dialog";
+import { useState } from "react";
 
 interface Shelter {
-  name: string
-  location: string
-  capacity: number
-  current: number
-  status: "available" | "full" | "limited"
+  name: string;
+  location: string;
+  capacity: number;
+  current: number;
+  status: "available" | "full" | "limited";
 }
 
 interface SuggestedResponse {
-  id: string
-  action: string
-  priority: string
-  description: string
-  impact: string
+  id: string;
+  action: string;
+  priority: string;
+  description: string;
+  impact: string;
 }
 
 const shelters: Shelter[] = [
@@ -65,7 +65,7 @@ const shelters: Shelter[] = [
     current: 1200,
     status: "full",
   },
-]
+];
 
 const suggestedResponses: SuggestedResponse[] = [
   {
@@ -80,35 +80,33 @@ const suggestedResponses: SuggestedResponse[] = [
     id: "RESP-002",
     action: "Deploy medical teams",
     priority: "high",
-    description:
-      "Multiple SAR operations require immediate medical support.",
+    description: "Multiple SAR operations require immediate medical support.",
     impact: "Provides on-site emergency medical services",
   },
   {
     id: "RESP-003",
     action: "Increase warning speaker activation",
     priority: "medium",
-    description:
-      "Extend community warnings to northern peripheral areas.",
+    description: "Extend community warnings to northern peripheral areas.",
     impact: "Reaches 15,000+ additional residents",
   },
-]
+];
 
 function getCapacityColor(status: string) {
   switch (status) {
     case "full":
-      return "bg-red-500/20 text-red-400 border-red-500/30"
+      return "bg-red-500/20 text-red-400 border-red-500/30";
     case "limited":
-      return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+      return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
     case "available":
-      return "bg-green-500/20 text-green-400 border-green-500/30"
+      return "bg-green-500/20 text-green-400 border-green-500/30";
     default:
-      return "bg-gray-500/20 text-gray-400"
+      return "bg-gray-500/20 text-gray-400";
   }
 }
 
 export function LguOperationsDashboard() {
-  const [openModal, setOpenModal] = useState<string | null>(null)
+  const [openModal, setOpenModal] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -122,6 +120,19 @@ export function LguOperationsDashboard() {
           <p className="text-muted-foreground mt-2">
             Evacuation capacity, community alerts, and suggested responses
           </p>
+          <p className="text-xs text-muted-foreground mt-2">
+            Updated as of{" "}
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+            })}{" "}
+            {new Date().toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })}
+          </p>
         </div>
 
         {/* Quick Actions */}
@@ -134,7 +145,9 @@ export function LguOperationsDashboard() {
             <Radio className="h-5 w-5 mr-2" />
             <div className="text-left">
               <div className="font-bold">ACTIVATE Warning Speakers</div>
-              <div className="text-sm opacity-90">Broadcast community alert</div>
+              <div className="text-sm opacity-90">
+                Broadcast community alert
+              </div>
             </div>
           </Button>
 
@@ -158,7 +171,9 @@ export function LguOperationsDashboard() {
             <Send className="h-5 w-5 mr-2" />
             <div className="text-left">
               <div className="font-bold">INFORM Nearby Communities</div>
-              <div className="text-sm opacity-90">Send updates to neighboring LGUs</div>
+              <div className="text-sm opacity-90">
+                Send updates to neighboring LGUs
+              </div>
             </div>
           </Button>
         </div>
@@ -174,7 +189,7 @@ export function LguOperationsDashboard() {
           <CardContent>
             <div className="space-y-4">
               {shelters.map((shelter) => {
-                const percentage = (shelter.current / shelter.capacity) * 100
+                const percentage = (shelter.current / shelter.capacity) * 100;
                 return (
                   <div
                     key={shelter.name}
@@ -206,7 +221,6 @@ export function LguOperationsDashboard() {
                       >
                         {shelter.status.toUpperCase()}
                       </Badge>
-
                     </div>
 
                     <div className="flex items-center justify-between mb-2">
@@ -231,7 +245,7 @@ export function LguOperationsDashboard() {
                       />
                     </div>
                   </div>
-                )
+                );
               })}
             </div>
 
@@ -320,5 +334,5 @@ export function LguOperationsDashboard() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
