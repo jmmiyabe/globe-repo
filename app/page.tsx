@@ -1,21 +1,28 @@
 "use client"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { useUserRole } from "@/hooks/useUserRole" 
-import { EmergencyDashboard } from "@/components/dashboard/emergency-dashboard"
+import { useUserRole } from "@/hooks/useUserRole"
+import { LguMainDashboard } from "@/components/dashboard/lgu-main-dashboard"
 
 export default function Home() {
-  const { isGuest } = useUserRole()
+  const { isGuest, isAdmin, isLoaded } = useUserRole()
   const router = useRouter()
+  const [redirecting, setRedirecting] = useState(false)
 
   useEffect(() => {
-    if (isGuest) {      router.replace("/citizen-hub")
+    if (!isLoaded) return // wait for role check
+
+    if (isGuest) {
+      setRedirecting(true)
+      router.replace("/citizen-hub")
     }
-  }, [isGuest, router])
+  }, [isGuest, isLoaded, router])
 
-  if (isGuest) {
-    return null 
-  }
+  // While loading role or redirecting, show nothing
+  if (!isLoaded || redirecting) return null
 
-  return <EmergencyDashboard />
+  // Admin default view
+  if (isAdmin) return <LguMainDashboard />
+
+  return null
 }
