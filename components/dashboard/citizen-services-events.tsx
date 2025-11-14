@@ -10,13 +10,19 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./status-badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function CitizenServicesEvents() {
   const [bookingStatus, setBookingStatus] = useState("");
   const [registrationStatus, setRegistrationStatus] = useState<{
     [key: number]: boolean;
   }>({});
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleBookService = (serviceName: string) => {
     setBookingStatus(`Booking ${serviceName}...`);
@@ -47,6 +53,19 @@ export function CitizenServicesEvents() {
           </div>
           <p className="text-muted-foreground">
             Access local services and register for community activities
+          </p>
+          <p className="text-xs text-muted-foreground mt-2">
+            Updated as of{" "}
+            {currentTime.toLocaleDateString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+            })}{" "}
+            {currentTime.toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })}
           </p>
         </div>
 

@@ -17,12 +17,18 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./status-badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function CitizenHub() {
   const [callStatus, setCallStatus] = useState("");
   const [shelterModal, setShelterModal] = useState(false);
   const [selectedService, setSelectedService] = useState("");
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleCall = (number: string, service: string) => {
     setCallStatus(`Calling ${service} at ${number}...`);
@@ -52,6 +58,19 @@ export function CitizenHub() {
           <p className="text-muted-foreground">
             Your central hub for emergency services, alerts, and community
             information
+          </p>
+          <p className="text-xs text-muted-foreground mt-2">
+            Updated as of{" "}
+            {currentTime.toLocaleDateString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+            })}{" "}
+            {currentTime.toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })}
           </p>
         </div>
 
