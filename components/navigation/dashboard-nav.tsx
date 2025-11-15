@@ -115,10 +115,10 @@ export function DashboardNav() {
         >
           <div className="w-8 h-8 bg-sidebar-primary rounded-lg flex items-center justify-center">
             <span className="text-xs font-bold text-sidebar-primary-foreground">
-              WCC
+              PCC
             </span>
           </div>
-          <span className="hidden sm:inline">Weather Command</span>
+          <span className="hidden sm:inline">Pasay Command Center</span>
           <span className="sm:hidden">WCC</span>
         </Link>
 
