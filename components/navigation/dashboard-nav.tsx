@@ -41,7 +41,7 @@ export function DashboardNav() {
     },
     {
       label: "Emergency Response",
-      href: "/",
+      href: "/emergency-dashboard",
       icon: <AlertTriangle className="h-4 w-4" />,
       category: "LGU",
     },
