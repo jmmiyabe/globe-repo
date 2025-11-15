@@ -183,46 +183,222 @@ export function LguMainDashboard() {
           </p>
         </div>
 
-        {/* Key Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {keyMetrics.map((metric, idx) => (
-            <Card
-              key={idx}
-              className={`border ${getMetricColor(metric.color)}`}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {metric.label}
-                  </CardTitle>
-                  <div className={getMetricTextColor(metric.color)}>
-                    {metric.icon}
+        {/* Two Column Layout: Metrics + Map */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+          {/* Left Side: Key Metrics - Vertical Stack */}
+          <div className="lg:col-span-1 space-y-2">
+            {keyMetrics.map((metric, idx) => (
+              <Card
+                key={idx}
+                className={`border ${getMetricColor(metric.color)}`}
+              >
+                <div className="p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {metric.label}
+                    </p>
+                    <div className={getMetricTextColor(metric.color)}>
+                      {metric.icon}
+                    </div>
+                  </div>
+                  <div
+                    className={`text-2xl font-bold ${getMetricTextColor(
+                      metric.color
+                    )}`}
+                  >
+                    {metric.value}
+                  </div>
+                  {metric.change !== undefined && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      <span
+                        className={
+                          metric.change < 0
+                            ? "text-green-400"
+                            : "text-yellow-400"
+                        }
+                      >
+                        {metric.change < 0 ? "↓" : "↑"}{" "}
+                        {Math.abs(metric.change)}
+                      </span>{" "}
+                      from last hour
+                    </p>
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {/* Right Side: Real-time Situational Map */}
+          <Card className="border-border lg:col-span-2">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-primary" />
+                Real-Time Situational Map
+              </CardTitle>
+              <CardDescription>
+                Geographic overview of incidents, alerts, and resources
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="relative w-full h-[500px] bg-muted rounded-lg overflow-hidden border border-border">
+                {/* Map Background */}
+                <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
+                  {/* Grid overlay for map effect */}
+                  <div className="absolute inset-0 opacity-20">
+                    <svg className="w-full h-full">
+                      <defs>
+                        <pattern
+                          id="grid"
+                          width="40"
+                          height="40"
+                          patternUnits="userSpaceOnUse"
+                        >
+                          <path
+                            d="M 40 0 L 0 0 0 40"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="0.5"
+                          />
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#grid)" />
+                    </svg>
+                  </div>
+
+                  {/* District Labels */}
+                  <div className="absolute top-8 left-8 bg-slate-800/80 backdrop-blur px-3 py-2 rounded-lg border border-slate-700">
+                    <p className="text-xs font-semibold text-slate-300">
+                      North District
+                    </p>
+                  </div>
+                  <div className="absolute top-8 right-8 bg-slate-800/80 backdrop-blur px-3 py-2 rounded-lg border border-slate-700">
+                    <p className="text-xs font-semibold text-slate-300">
+                      East District
+                    </p>
+                  </div>
+                  <div className="absolute bottom-8 left-8 bg-slate-800/80 backdrop-blur px-3 py-2 rounded-lg border border-slate-700">
+                    <p className="text-xs font-semibold text-slate-300">
+                      West District
+                    </p>
+                  </div>
+                  <div className="absolute bottom-8 right-8 bg-slate-800/80 backdrop-blur px-3 py-2 rounded-lg border border-slate-700">
+                    <p className="text-xs font-semibold text-slate-300">
+                      Central District
+                    </p>
+                  </div>
+
+                  {/* Critical Alert Markers */}
+                  <div className="absolute top-24 left-20">
+                    <div className="relative group cursor-pointer">
+                      <div className="absolute -inset-2 bg-red-500/20 rounded-full animate-pulse"></div>
+                      <div className="relative w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
+                        <AlertTriangle className="h-3 w-3 text-white" />
+                      </div>
+                      <div className="absolute left-8 top-0 bg-red-900/90 backdrop-blur px-3 py-2 rounded-lg border border-red-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        <p className="text-xs font-semibold text-red-200">
+                          Heavy Flooding
+                        </p>
+                        <p className="text-xs text-red-300">342 evacuees</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Warning Markers */}
+                  <div className="absolute top-40 right-32">
+                    <div className="relative group cursor-pointer">
+                      <div className="absolute -inset-2 bg-yellow-500/20 rounded-full animate-pulse"></div>
+                      <div className="relative w-5 h-5 bg-yellow-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
+                        <AlertCircle className="h-3 w-3 text-white" />
+                      </div>
+                      <div className="absolute left-8 top-0 bg-yellow-900/90 backdrop-blur px-3 py-2 rounded-lg border border-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        <p className="text-xs font-semibold text-yellow-200">
+                          Shelter at 68%
+                        </p>
+                        <p className="text-xs text-yellow-300">
+                          Central Gymnasium
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="absolute bottom-32 left-40">
+                    <div className="relative group cursor-pointer">
+                      <div className="absolute -inset-2 bg-yellow-500/20 rounded-full animate-pulse"></div>
+                      <div className="relative w-5 h-5 bg-yellow-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
+                        <Shield className="h-3 w-3 text-white" />
+                      </div>
+                      <div className="absolute left-8 top-0 bg-yellow-900/90 backdrop-blur px-3 py-2 rounded-lg border border-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        <p className="text-xs font-semibold text-yellow-200">
+                          Security Alert
+                        </p>
+                        <p className="text-xs text-yellow-300">
+                          2 patrols active
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Resource Location Markers */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <div className="relative group cursor-pointer">
+                      <div className="relative w-5 h-5 bg-blue-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
+                        <Users className="h-3 w-3 text-white" />
+                      </div>
+                      <div className="absolute left-8 top-0 bg-blue-900/90 backdrop-blur px-3 py-2 rounded-lg border border-blue-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        <p className="text-xs font-semibold text-blue-200">
+                          Main Shelter
+                        </p>
+                        <p className="text-xs text-blue-300">1,200 capacity</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="absolute bottom-40 right-40">
+                    <div className="relative group cursor-pointer">
+                      <div className="relative w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
+                        <Radio className="h-3 w-3 text-white" />
+                      </div>
+                      <div className="absolute left-8 top-0 bg-green-900/90 backdrop-blur px-3 py-2 rounded-lg border border-green-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        <p className="text-xs font-semibold text-green-200">
+                          Command Post
+                        </p>
+                        <p className="text-xs text-green-300">
+                          Operations Center
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div
-                  className={`text-3xl font-bold ${getMetricTextColor(
-                    metric.color
-                  )}`}
-                >
-                  {metric.value}
-                </div>
-                {metric.change !== undefined && (
-                  <p className="text-xs text-muted-foreground mt-2">
-                    <span
-                      className={
-                        metric.change < 0 ? "text-green-400" : "text-yellow-400"
-                      }
-                    >
-                      {metric.change < 0 ? "↓" : "↑"} {Math.abs(metric.change)}
-                    </span>{" "}
-                    from last hour
+
+                {/* Map Legend */}
+                <div className="absolute bottom-4 left-4 bg-slate-800/90 backdrop-blur px-4 py-3 rounded-lg border border-slate-700">
+                  <p className="text-xs font-semibold text-slate-300 mb-2">
+                    Legend
                   </p>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-red-500 rounded-full border border-white"></div>
+                      <span className="text-xs text-slate-300">
+                        Critical Alert
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-yellow-500 rounded-full border border-white"></div>
+                      <span className="text-xs text-slate-300">Warning</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-blue-500 rounded-full border border-white"></div>
+                      <span className="text-xs text-slate-300">Shelter</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-green-500 rounded-full border border-white"></div>
+                      <span className="text-xs text-slate-300">Resources</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Urgent Alerts Section */}
