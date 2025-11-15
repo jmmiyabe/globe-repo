@@ -4,6 +4,7 @@ import {
   Phone,
   MapPin,
   AlertCircle,
+  AlertTriangle,
   Calendar,
   Briefcase,
   Siren,
@@ -291,21 +292,51 @@ export function CitizenHub() {
             </CardContent>
           </Card>
 
-          {/* Local Incidents */}
+          {/* Emergency Incidents */}
           <Card className="bg-card border-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-accent" />
-                Local Incidents
+                <AlertCircle className="h-5 w-5 text-destructive" />
+                Emergency Incidents
               </CardTitle>
               <CardDescription>
-                Stay informed about local incidents
+                Critical life-safety events requiring immediate attention
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {[
                 { incident: "Flooding Casualties/Stranded", level: "critical" },
                 { incident: "Fire Spread", level: "critical" },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="p-3 bg-destructive/10 rounded-lg border border-destructive/30"
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold">{item.incident}</p>
+                    <StatusBadge
+                      level={item.level as "warning" | "safe" | "critical"}
+                      label={item.level.toUpperCase()}
+                    />
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Community Issues */}
+          <Card className="bg-card border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                Community Issues
+              </CardTitle>
+              <CardDescription>
+                Non-emergency concerns and quality of life matters
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {[
                 { incident: "Cat and Dog Populations", level: "warning" },
                 { incident: "Littering", level: "warning" },
               ].map((item, i) => (
