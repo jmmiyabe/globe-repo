@@ -158,8 +158,8 @@ export function LguWeatherDashboard() {
         {/* Map */}
         <Card className="bg-card border-border">
           <CardHeader>
-            <CardTitle>Philippine Weather Map</CardTitle>
-            <CardDescription>Live wind, clouds, precipitation, and temperature layers</CardDescription>
+            <CardTitle>Pasay Weather Status Map</CardTitle>
+            <CardDescription>Live wind, clouds, precipitation, and temperature data</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <WeatherMapPasayDynamic areas={areas} />
