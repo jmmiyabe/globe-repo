@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useUserRole } from "@/hooks/useUserRole"
-import { LguMainDashboard } from "@/components/dashboard/lgu-main-dashboard"
+import LguMainDashboard  from "@/components/dashboard/lgu-main-dashboard"
 
 export default function Home() {
   const { isGuest, isAdmin, isLoaded } = useUserRole()
