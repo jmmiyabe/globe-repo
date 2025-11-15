@@ -1,180 +1,152 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  GeoJSON,
-  useMap,
-} from "react-leaflet";
-import L, { PathOptions } from "leaflet";
+import { MapContainer, TileLayer, LayersControl, LayerGroup, GeoJSON, Marker, Tooltip, useMap } from "react-leaflet";
+import * as L from "leaflet";
+import { Feature, FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 import "leaflet/dist/leaflet.css";
-// 🛑 Removed 'GeoJsonProperties' import
-import { Feature, Geometry } from "geojson";
-
-// ---------------- TYPES ----------------
-export interface AreaWeather {
-  area: string;
-  lat: number;
-  lon: number;
-  condition: string;
-  temp: number;
-  humidity: number;
-  windSpeed: number;
-  visibility: number;
-  alert: "critical" | "warning" | "safe";
-}
-
-// ✅ FIX: Use a generic Record<string, any> for GeoJSON properties
-interface BrgyProperties extends Record<string, any> { 
-  brgy_name: string; 
-  weather?: AreaWeather | null;
-}
+import { OpenWeatherMapLayer } from "./OpenWeatherMapLayer";
+import type { AreaWeather } from "./lgu-weather-dashboard";
 
 interface WeatherMapPasayProps {
   areas: AreaWeather[];
 }
 
-// ---------------- ICON (No change) ----------------
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "/leaflet/images/marker-icon-2x.png",
-  iconUrl: "/leaflet/images/marker-icon.png",
-  shadowUrl: "/leaflet/images/marker-shadow.png",
-});
-
-// ---------------- AUTO-FIT MAP (No change) ----------------
-function MapBoundsController({ geojson }: { geojson: Feature<Geometry, BrgyProperties>[] }) {
+// Fit map to polygon bounds
+function FitBounds({ geoData }: { geoData: FeatureCollection<Geometry, GeoJsonProperties> | null }) {
   const map = useMap();
+
   useEffect(() => {
-    if (!geojson) return;
-    const layer = L.geoJSON(geojson as any); 
-    const bounds = layer.getBounds();
-    if (bounds.isValid()) map.fitBounds(bounds, { padding: [20, 20] });
-  }, [map, geojson]);
+    if (geoData) {
+      const geo = new L.GeoJSON(geoData);
+      map.fitBounds(geo.getBounds(), { padding: [20, 20] });
+    }
+  }, [geoData, map]);
+
   return null;
 }
 
-// ---------------- COMPONENT ----------------
-export default function WeatherMapPasay({ areas }: WeatherMapPasayProps) {
-  const [geojson, setGeojson] = useState<Feature<Geometry, BrgyProperties>[] | null>(null);
+// Polygon style based on alert status
+function getPolygonStyle(feature: Feature<Geometry, GeoJsonProperties>, areas: AreaWeather[]): L.PathOptions {
+  const zoneName = feature.properties?.NAME_1 as string;
+  const area = areas.find((a) => a.area === zoneName);
+  let color = "green"; // safe by default
 
-  // Fetch Pasay GeoJSON & merge weather 
-  useEffect(() => {
-    async function fetchGeoJSON() {
-      try {
-        const res = await fetch("/Pasay.geojson"); 
-        if (!res.ok) throw new Error("Failed to fetch GeoJSON");
-        const data = await res.json();
+  if (area) {
+    if (area.alert === "critical") color = "red";
+    else if (area.alert === "warning") color = "yellow";
+  }
 
-        const features: Feature<Geometry, BrgyProperties>[] = data.features.map((feature: any) => {
-          const brgyName = feature.properties.brgy_name; 
-          const weather = areas.find((a) => a.area === brgyName) || null;
-          return {
-            ...feature,
-            properties: {
-              ...feature.properties,
-              weather,
-            },
-          } as Feature<Geometry, BrgyProperties>;
-        });
-
-        setGeojson(features);
-      } catch (err) {
-        console.error("Failed to load Pasay polygons", err);
-      }
-    }
-    
-    if (!geojson) {
-        fetchGeoJSON();
-    } else {
-        const updatedFeatures: Feature<Geometry, BrgyProperties>[] = geojson.map((feature) => {
-            const brgyName = feature.properties.brgy_name;
-            const weather = areas.find((a) => a.area === brgyName) || null;
-            return {
-                ...feature,
-                properties: {
-                    ...feature.properties,
-                    weather,
-                },
-            };
-        });
-        setGeojson(updatedFeatures);
-    }
-
-  }, [areas, geojson]); // Added geojson to dependency array for clarity/correctness
-
-  // ✅ FIX: The function signature is correctly defined to return Leaflet's PathOptions.
-  // We use the generic Feature type for the argument, which is safer.
-  const getPolygonStyle = (feature: Feature<Geometry, BrgyProperties>): PathOptions => {
-    const props = feature.properties as BrgyProperties;
-    const alert = props.weather?.alert ?? "safe";
-    
-    const colors: Record<string, { stroke: string; fill: string }> = {
-      critical: { stroke: "#ff0000", fill: "#ff000050" },
-      warning: { stroke: "#ffff00", fill: "#ffff0050" },
-      safe: { stroke: "#0088ff", fill: "#0088ff33" },
-    };
-    
-    return {
-      color: colors[alert].stroke,
-      weight: 1,
-      fillColor: colors[alert].fill,
-      fillOpacity: 0.4,
-    };
+  return {
+    color,
+    weight: 2,
+    fillOpacity: 0.3,
   };
+}
+
+// Custom sensor icon
+const sensorIcon = new L.Icon({
+  iconUrl: "/icons/sensor.png", // replace with your icon path
+  iconSize: [30, 30],
+  iconAnchor: [15, 30],
+  popupAnchor: [0, -30],
+});
+
+export function WeatherMapPasay({ areas }: WeatherMapPasayProps) {
+  const [geoData, setGeoData] = useState<FeatureCollection<Geometry, GeoJsonProperties> | null>(null);
+
+  // Fetch Pasay GeoJSON
+  useEffect(() => {
+    fetch("/PASAY.geojson")
+      .then((res) => res.json())
+      .then((data: FeatureCollection<Geometry, GeoJsonProperties>) => setGeoData(data))
+      .catch((err) => console.error("Failed to load GeoJSON", err));
+  }, []);
 
   return (
-    <div style={{ height: "400px", width: "100%" }}> 
-      <MapContainer
-        center={[14.552, 120.998]}
-        zoom={13}
-        style={{ width: "100%", height: "100%" }} 
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution="&copy; OpenStreetMap contributors"
+    <MapContainer
+      center={[14.5416, 120.9936]}
+      zoom={13}
+      scrollWheelZoom
+      style={{ height: "90vh", width: "100%" }}
+    >
+      {/* Base Map */}
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="&copy; OpenStreetMap contributors"
+      />
+
+      {/* Fit map to polygons */}
+      {geoData && <FitBounds geoData={geoData} />}
+
+      {/* Polygons */}
+      {geoData && (
+        <GeoJSON
+          data={geoData}
+          style={(feature) => getPolygonStyle(feature as Feature<Geometry, GeoJsonProperties>, areas)}
+          onEachFeature={(feature, layer) => {
+            if (layer instanceof L.Path) {
+              layer.bindPopup(`<strong>${feature.properties?.NAME_1 || "Unknown"}</strong>`);
+            }
+          }}
         />
+      )}
 
-        {geojson && <MapBoundsController geojson={geojson} />}
+    {/* Markers for each area */}
+    {areas.map((area) => (
+      <Marker key={area.area} position={[area.lat, area.lon]} icon={sensorIcon}>
+        <Tooltip direction="top" offset={[0, -15]} opacity={1} permanent={false}>
+          <div className="p-2 rounded-lg shadow-lg w-48 bg-card border border-border text-xs text-foreground">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-semibold">{area.area}</h3>
+              <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${
+                area.alert === "critical"
+                  ? "bg-red-500/30 text-red-300"
+                  : area.alert === "warning"
+                  ? "bg-yellow-500/30 text-yellow-300"
+                  : "bg-green-500/30 text-green-300"
+              }`}>
+                {area.alert.toUpperCase()}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-[11px]">
+              <div>
+                <p className="opacity-70">Condition</p>
+                <p className="font-semibold">{area.condition}</p>
+              </div>
+              <div>
+                <p className="opacity-70">Temp</p>
+                <p className="font-semibold">{area.temp}°C</p>
+              </div>
+              <div>
+                <p className="opacity-70">Humidity</p>
+                <p className="font-semibold">{area.humidity}%</p>
+              </div>
+              <div>
+                <p className="opacity-70">Wind</p>
+                <p className="font-semibold">{area.windSpeed} km/h</p>
+              </div>
+              <div className="col-span-2">
+                <p className="opacity-70">Visibility</p>
+                <p className="font-semibold">{area.visibility} km</p>
+              </div>
+            </div>
+          </div>
+        </Tooltip>
+      </Marker>
+    ))}
 
-        {geojson && (
-          <GeoJSON
-            data={geojson as any} 
-            style={getPolygonStyle as any} // Keep the 'as any' for maximum compatibility with react-leaflet
-            onEachFeature={(feature, layer) => {
-              const brgyName = (feature.properties as BrgyProperties).brgy_name; 
-              const weather = (feature.properties as BrgyProperties).weather;
 
-              const condition = weather?.condition ?? "No Data";
-              const alert = weather?.alert ?? "No Data";
-              layer.bindPopup(
-                `<strong>${brgyName}</strong><br/>Condition: ${condition}<br/>Alert: ${alert}`
-              );
-            }}
-          />
-        )}
-
-        {areas.map((area) => (
-          <Marker key={area.area} position={[area.lat, area.lon]}>
-            <Popup>
-              <strong>{area.area}</strong>
-              <br />
-              Condition: {area.condition}
-              <br />
-              Temp: {area.temp}°C
-              <br />
-              Humidity: {area.humidity}%
-              <br />
-              Wind: {area.windSpeed} km/h
-              <br />
-              Visibility: {area.visibility} km
-            </Popup>
-          </Marker>
+      {/* OpenWeatherMap Layers */}
+      <LayersControl position="topright">
+        {["wind_new", "clouds_new", "precipitation_new", "temp_new"].map((layer) => (
+          <LayersControl.Overlay key={layer} name={layer}>
+            <LayerGroup>
+              <OpenWeatherMapLayer layer={layer as any} />
+            </LayerGroup>
+          </LayersControl.Overlay>
         ))}
-      </MapContainer>
-    </div>
+      </LayersControl>
+    </MapContainer>
   );
 }
