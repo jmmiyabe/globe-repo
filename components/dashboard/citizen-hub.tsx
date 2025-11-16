@@ -12,7 +12,10 @@ import {
   Droplets,
   Wind,
   Cloud,
+  Gift,
+  Heart,
 } from "lucide-react";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -29,6 +32,9 @@ export function CitizenHub() {
   const [shelterModal, setShelterModal] = useState(false);
   const [selectedService, setSelectedService] = useState("");
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [voucherClaimed, setVoucherClaimed] = useState(false);
+  const [donationAmount, setDonationAmount] = useState(0);
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
@@ -48,6 +54,21 @@ export function CitizenHub() {
   const handleServiceAction = (service: string) => {
     setSelectedService(service);
     setTimeout(() => setSelectedService(""), 3000);
+  };
+
+  const handleClaimVoucher = () => {
+    if (phoneNumber.length === 10) {
+      setVoucherClaimed(true);
+      setTimeout(() => {
+        setVoucherClaimed(false);
+        setPhoneNumber("");
+      }, 5000);
+    }
+  };
+
+  const handleDonate = (amount: number) => {
+    setDonationAmount(amount);
+    setTimeout(() => setDonationAmount(0), 5000);
   };
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
@@ -156,6 +177,163 @@ export function CitizenHub() {
                 </div>
               </div>
             </CardContent>
+          </Card>
+        </div>
+
+        {/* GlobeOne Support Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
+          {/* Load Voucher Card */}
+          <Card className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border-blue-500 md:col-span-2 h-full">
+            <CardHeader className="pb-2 pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Image
+                    src="/globeone.png"
+                    alt="GlobeOne"
+                    width={60}
+                    height={20}
+                    className="object-contain"
+                  />
+                  <CardTitle className="flex items-center gap-1.5 text-sm">
+                    Claim Load Voucher
+                    <Gift className="h-4 w-4 text-blue-500" />
+                  </CardTitle>
+                </div>
+              </div>
+              <CardDescription className="text-xs mt-0.5">
+                Sponsored by GlobeOne for emergency communications
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-1.5 pt-0 pb-4">
+              <div className="text-center p-1.5 bg-blue-500/20 rounded-lg">
+                <p className="text-xs font-bold text-blue-500">
+                  Emergency Promo Package
+                </p>
+                <p className="text-xs font-semibold">
+                  100MB Data • Unli Calls & Texts • 2 Days
+                </p>
+              </div>
+              <div className="space-y-0.5">
+                <label className="text-xs font-medium">
+                  Globe Mobile Number
+                </label>
+                <div className="flex gap-1.5">
+                  <div className="flex items-center bg-muted px-2 rounded-md border border-border">
+                    <span className="text-xs font-medium">+63</span>
+                  </div>
+                  <input
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+                      if (value.length <= 10) {
+                        setPhoneNumber(value);
+                      }
+                    }}
+                    placeholder="9XX XXX XXXX"
+                    className="flex-1 px-2 py-1 bg-background border border-border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    maxLength={10}
+                  />
+                </div>
+              </div>
+              <Button
+                onClick={handleClaimVoucher}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white gap-1.5 text-xs h-8"
+                disabled={voucherClaimed || phoneNumber.length !== 10}
+              >
+                <Gift className="h-3 w-3" />
+                {voucherClaimed ? "Voucher Claimed!" : "Claim Now"}
+              </Button>
+              {voucherClaimed && (
+                <div className="p-1.5 bg-green-500/20 rounded-lg text-center">
+                  <p className="text-xs font-semibold text-green-500">
+                    ✓ Voucher sent to +63{phoneNumber}!
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Video */}
+          <div className="md:col-span-3 h-full">
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/8ovY9QsSxBo?start=22"
+              title="Community Support Video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="rounded-lg"
+            ></iframe>
+          </div>
+
+          {/* Donation Card - Hero Layout */}
+          <Card className="bg-white border-blue-500 overflow-hidden md:col-span-1 h-full">
+            <div className="relative">
+              {/* Hero Background Pattern */}
+              <div className="absolute inset-0 bg-white">
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(circle, rgba(59, 130, 246, 0.08) 1px, transparent 1px)",
+                    backgroundSize: "20px 20px",
+                  }}
+                ></div>
+              </div>
+
+              {/* Hero Content */}
+              <CardContent className="relative pt-4 pb-4 flex items-center justify-center min-h-full">
+                <div className="text-center space-y-2 flex flex-col items-center justify-center w-full">
+                  {/* Headline */}
+                  <div className="space-y-0.5 flex flex-col items-center">
+                    <h3 className="text-base font-bold text-foreground text-center">
+                      Make a Difference Today
+                    </h3>
+                    <p className="text-xs text-muted-foreground text-center px-2">
+                      Your Globe Rewards points can provide essential supplies
+                      to families affected by disasters
+                    </p>
+                  </div>
+
+                  {/* CTA Button */}
+                  <div className="pt-0.5 flex flex-col items-center w-full space-y-1">
+                    <Button
+                      onClick={() =>
+                        window.open(
+                          "https://www.globe.com.ph/apps-content/globeone.html",
+                          "_blank"
+                        )
+                      }
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-semibold"
+                    >
+                      Donate Now
+                    </Button>
+                    <p className="text-[10px] text-muted-foreground text-center">
+                      Open GlobeOne app to donate
+                    </p>
+                  </div>
+
+                  {/* Impact Stats */}
+                  <div className="pt-1.5 flex items-center justify-center gap-4 text-sm w-full">
+                    <div className="text-center flex flex-col items-center">
+                      <p className="text-base font-bold text-blue-500">₱1.2M</p>
+                      <p className="text-xs text-muted-foreground">
+                        Total Raised
+                      </p>
+                    </div>
+                    <div className="h-5 w-px bg-border"></div>
+                    <div className="text-center flex flex-col items-center">
+                      <p className="text-base font-bold text-blue-500">523</p>
+                      <p className="text-xs text-muted-foreground">
+                        Families Helped
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </div>
           </Card>
         </div>
 
