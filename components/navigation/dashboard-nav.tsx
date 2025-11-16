@@ -86,6 +86,12 @@ export function DashboardNav() {
       icon: <AlertCircle className="h-4 w-4" />,
       category: "Citizen",
     },
+    {
+      label: "Structural Monitoring",
+      href: "/citizen/structural-monitoring",
+      icon: <Building2 className="h-4 w-4" />,
+      category: "Citizen",
+    },
   ];
 
   const filteredItems = navItems.filter((item) => {
