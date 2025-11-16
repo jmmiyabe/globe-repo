@@ -212,7 +212,9 @@ export function LguSarSecurityDashboard() {
                         <Badge
                           className={`${
                             report.status === "active"
-                              ? "bg-green-500/30 text-green-300"
+                              ? "bg-green-600 text-white"
+                              : report.status === "pending"
+                              ? "bg-yellow-600 text-white"
                               : "bg-gray-500/30 text-gray-300"
                           }`}
                         >
@@ -276,7 +278,7 @@ export function LguSarSecurityDashboard() {
                   )}`}
                 >
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                    <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold text-foreground">
@@ -285,7 +287,7 @@ export function LguSarSecurityDashboard() {
                         <Badge
                           className={`${
                             warning.status === "active"
-                              ? "bg-red-500/30 text-red-300"
+                              ? "bg-green-600 text-white"
                               : "bg-gray-500/30 text-gray-300"
                           }`}
                         >

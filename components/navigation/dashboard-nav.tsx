@@ -67,12 +67,6 @@ export function DashboardNav() {
       icon: <Radio className="h-4 w-4" />,
       category: "LGU",
     },
-    {
-      label: "Emergency Response",
-      href: "/emergency-dashboard",
-      icon: <AlertTriangle className="h-4 w-4" />,
-      category: "LGU",
-    },
     // Citizen Dashboards
     {
       label: "Community Hub",
