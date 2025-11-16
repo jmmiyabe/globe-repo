@@ -202,21 +202,21 @@ const urgentAlerts: UrgentAlert[] = [
 const keyMetrics: MetricData[] = [
   {
     label: "Critical Alerts",
-    value: "2",
+    value: "1",
     change: -1,
     icon: <AlertTriangle className="h-5 w-5" />,
     color: "critical",
   },
   {
     label: "Active Incidents",
-    value: "12",
+    value: "2",
     change: -3,
     icon: <Radio className="h-5 w-5" />,
     color: "warning",
   },
   {
     label: "Evacuees Sheltered",
-    value: "2,298",
+    value: "342",
     change: 156,
     icon: <Users className="h-5 w-5" />,
     color: "neutral",
@@ -256,7 +256,7 @@ const MARKERS: MapMarker[] = [
     id: "main-shelter",
     type: "shelter",
     title: "Main Shelter",
-    desc: "1,200 capacity",
+    desc: "1,104/1,200 capacity",
     position: [14.542438, 121.002989],
   },
   {
