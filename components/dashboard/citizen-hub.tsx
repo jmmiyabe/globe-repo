@@ -277,13 +277,10 @@ export function CitizenHub() {
                 { title: "Health Programs", type: "Health" },
                 { title: "Local Vegetable Planting", type: "Agriculture" },
               ].map((item, i) => (
-                <div
-                  key={i}
-                  className="p-3 bg-muted rounded-lg border border-border"
-                >
+                <div key={i} className="p-3 rounded-lg border border-border">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold">{item.title}</p>
-                    <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded">
+                    <span className="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded">
                       {item.type}
                     </span>
                   </div>
@@ -292,69 +289,75 @@ export function CitizenHub() {
             </CardContent>
           </Card>
 
-          {/* Emergency Incidents */}
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-destructive" />
-                Emergency Incidents
-              </CardTitle>
-              <CardDescription>
-                Critical life-safety events requiring immediate attention
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {[
-                { incident: "Flooding Casualties/Stranded", level: "critical" },
-                { incident: "Fire Spread", level: "critical" },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  className="p-3 bg-destructive/10 rounded-lg border border-destructive/30"
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold">{item.incident}</p>
-                    <StatusBadge
-                      level={item.level as "warning" | "safe" | "critical"}
-                      label={item.level.toUpperCase()}
-                    />
+          {/* Emergency Incidents and Community Issues stacked */}
+          <div className="space-y-4">
+            {/* Emergency Incidents */}
+            <Card className="bg-card border-border">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <AlertCircle className="h-5 w-5 text-destructive" />
+                  Emergency Incidents
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Critical life-safety events requiring immediate attention
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {[
+                  {
+                    incident: "Flooding Casualties/Stranded",
+                    level: "critical",
+                  },
+                  { incident: "Fire Spread", level: "critical" },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="p-2.5 bg-destructive/10 rounded-lg border border-destructive/30"
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold">{item.incident}</p>
+                      <StatusBadge
+                        level={item.level as "warning" | "safe" | "critical"}
+                        label={item.level.toUpperCase()}
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+                ))}
+              </CardContent>
+            </Card>
 
-          {/* Community Issues */}
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-yellow-500" />
-                Community Issues
-              </CardTitle>
-              <CardDescription>
-                Non-emergency concerns and quality of life matters
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {[
-                { incident: "Cat and Dog Populations", level: "warning" },
-                { incident: "Littering", level: "warning" },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  className="p-3 bg-muted rounded-lg border border-border"
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold">{item.incident}</p>
-                    <StatusBadge
-                      level={item.level as "warning" | "safe" | "critical"}
-                      label={item.level.toUpperCase()}
-                    />
+            {/* Community Issues */}
+            <Card className="bg-card border-border">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                  Community Issues
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Non-emergency concerns and quality of life matters
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {[
+                  { incident: "Cat and Dog Populations", level: "warning" },
+                  { incident: "Littering", level: "warning" },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="p-2.5 bg-muted rounded-lg border border-border"
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold">{item.incident}</p>
+                      <StatusBadge
+                        level={item.level as "warning" | "safe" | "critical"}
+                        label={item.level.toUpperCase()}
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Service Actions */}
