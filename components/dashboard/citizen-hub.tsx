@@ -8,6 +8,10 @@ import {
   Calendar,
   Briefcase,
   Siren,
+  Thermometer,
+  Droplets,
+  Wind,
+  Cloud,
 } from "lucide-react";
 import {
   Card,
@@ -78,136 +82,187 @@ export function CitizenHub() {
         {/* Emergency Quick Access */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {/* Emergency Services */}
-          <Card className="bg-accent/10 border-accent">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-accent">
-                <Siren className="h-5 w-5" />
+          <Card className="bg-red-500/10 border-2 border-red-500 md:col-span-1 flex flex-col">
+            <CardHeader className="text-center pt-8">
+              <CardTitle className="flex items-center justify-center gap-2 text-red-500 text-xl">
+                <Siren className="h-6 w-6" />
                 Emergency Services
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="flex-1 flex flex-col items-center justify-center space-y-4 pb-8">
               <Button
                 onClick={() => handleCall("911", "Emergency Services")}
-                className="w-full bg-accent hover:bg-accent/90 text-accent-foreground gap-2 h-10"
+                className="w-full bg-red-600 hover:bg-red-700 text-white gap-2 h-10"
                 title="Call 911 for immediate emergency assistance - Available 24/7"
               >
                 <Phone className="h-4 w-4" />
                 CALL 911
               </Button>
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-xs text-muted-foreground text-center mt-2">
                 Fire • Police • Medical
               </p>
             </CardContent>
           </Card>
 
-          {/* Evacuation Info */}
-          <Card className="bg-secondary/10 border-secondary">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-secondary">
-                <AlertCircle className="h-5 w-5" />
-                Evacuation Capacity
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-secondary mb-2">450/600</p>
-              <p className="text-xs text-muted-foreground">
-                Shelters available
-              </p>
-              <Button
-                size="sm"
-                onClick={handleViewShelters}
-                className="w-full mt-2 bg-secondary hover:bg-secondary/90"
-                title="View available evacuation centers with capacity and location details"
-              >
-                View Shelters
-              </Button>
-              {shelterModal && (
-                <div className="mt-2 p-2 bg-secondary/20 rounded text-xs">
-                  <p className="font-semibold">Available Shelters:</p>
-                  <p>• Pasay City Sports Complex (150/200)</p>
-                  <p>• Cuneta Astrodome (200/250)</p>
-                  <p>• Villamor Elem. School (100/150)</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Current Status */}
-          <Card className="bg-card border-border">
+          {/* Weather Widget */}
+          <Card className="bg-card border-border md:col-span-2">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-yellow-500" />
-                Status
+                <MapPin className="h-5 w-5 text-blue-500" />
+                Weather Update
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <StatusBadge level="warning" label="ALERT ACTIVE" />
-              <p className="text-xs text-muted-foreground mt-2">
-                Check latest updates and advisories
-              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div className="text-center">
+                  <Thermometer className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+                  <p className="text-3xl font-bold text-blue-500">28°C</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Temperature
+                  </p>
+                </div>
+                <div className="text-center">
+                  <Droplets className="h-8 w-8 text-cyan-500 mx-auto mb-2" />
+                  <p className="text-3xl font-bold text-cyan-500">75%</p>
+                  <p className="text-xs text-muted-foreground mt-1">Humidity</p>
+                </div>
+                <div className="text-center">
+                  <Wind className="h-8 w-8 text-teal-500 mx-auto mb-2" />
+                  <p className="text-3xl font-bold text-teal-500">15 km/h</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Wind Speed
+                  </p>
+                </div>
+                <div className="text-center">
+                  <Cloud className="h-8 w-8 text-yellow-500 mx-auto mb-2" />
+                  <p className="text-lg font-semibold text-yellow-500">
+                    Partly Cloudy
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Conditions
+                  </p>
+                </div>
+              </div>
+              <div className="border-t border-border pt-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">
+                    Pasay City, Metro Manila
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 text-yellow-500" />
+                  <StatusBadge level="warning" label="ALERT ACTIVE" />
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Quick Links Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          {/* Pasay Emergency Hotlines */}
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Phone className="h-5 w-5 text-secondary" />
-                Pasay Emergency Hotlines
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Pasay DRRM Office
-                  </p>
-                  <p className="text-lg font-mono font-bold text-primary">
-                    09054939111
-                  </p>
+          {/* Left Column - Pasay Emergency Hotlines and Emergency Services stacked */}
+          <div className="space-y-4">
+            {/* Pasay Emergency Hotlines */}
+            <Card className="bg-card border-border">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Phone className="h-5 w-5 text-secondary" />
+                  Pasay Emergency Hotlines
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <p className="text-xs text-muted-foreground mb-1">
+                        Pasay DRRM Office
+                      </p>
+                      <p className="text-lg font-mono font-bold text-primary">
+                        09054939111
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() =>
+                        handleCall("09054939111", "Pasay DRRM Office")
+                      }
+                      className="bg-blue-600 hover:bg-blue-700 text-white shrink-0"
+                      title="Quick dial to Pasay DRRM Office for disaster and emergency concerns"
+                    >
+                      Call Authorities
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Fire Dept</p>
+                      <p className="font-mono text-sm font-semibold">
+                        117 / 831-4222
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">
+                        Pasay Police
+                      </p>
+                      <p className="font-mono text-sm font-semibold">
+                        834-4030
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">NDRRMC</p>
+                      <p className="font-mono text-sm font-semibold">
+                        8920-1911
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">
+                        Phil. Red Cross
+                      </p>
+                      <p className="font-mono text-sm font-semibold">143</p>
+                    </div>
+                  </div>
+                  {callStatus && (
+                    <div className="mt-2 p-2 bg-secondary/20 rounded text-xs text-center font-semibold">
+                      {callStatus}
+                    </div>
+                  )}
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Fire Dept</p>
-                    <p className="font-mono text-sm font-semibold">
-                      117 / 831-4222
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">
-                      Pasay Police
-                    </p>
-                    <p className="font-mono text-sm font-semibold">834-4030</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">NDRRMC</p>
-                    <p className="font-mono text-sm font-semibold">8920-1911</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">
-                      Phil. Red Cross
-                    </p>
-                    <p className="font-mono text-sm font-semibold">143</p>
-                  </div>
-                </div>
+              </CardContent>
+            </Card>
+
+            {/* Evacuation Info */}
+            <Card className="bg-secondary/10 border-secondary">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-secondary">
+                  <AlertCircle className="h-5 w-5" />
+                  Evacuation Capacity
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold text-secondary mb-2">
+                  450/600
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Shelters available
+                </p>
                 <Button
-                  onClick={() => handleCall("09054939111", "Pasay DRRM Office")}
-                  className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
-                  title="Quick dial to Pasay DRRM Office for disaster and emergency concerns"
+                  size="sm"
+                  onClick={handleViewShelters}
+                  className="w-full mt-2 bg-secondary hover:bg-secondary/90"
+                  title="View available evacuation centers with capacity and location details"
                 >
-                  Call Now
+                  View Shelters
                 </Button>
-                {callStatus && (
-                  <div className="mt-2 p-2 bg-secondary/20 rounded text-xs text-center font-semibold">
-                    {callStatus}
+                {shelterModal && (
+                  <div className="mt-2 p-2 bg-secondary/20 rounded text-xs">
+                    <p className="font-semibold">Available Shelters:</p>
+                    <p>• Pasay City Sports Complex (150/200)</p>
+                    <p>• Cuneta Astrodome (200/250)</p>
+                    <p>• Villamor Elem. School (100/150)</p>
                   </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Service Availability */}
           <Card className="bg-card border-border">
@@ -359,55 +414,6 @@ export function CitizenHub() {
             </Card>
           </div>
         </div>
-
-        {/* Service Actions */}
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <CardTitle>Community Services</CardTitle>
-            <CardDescription>
-              Access local government services and programs
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <Button
-                onClick={() =>
-                  handleServiceAction("Connecting to LGU hotline...")
-                }
-                className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-12"
-                title="Contact Local Government Unit for inquiries and assistance"
-              >
-                <Phone className="h-4 w-4" />
-                CONTACT LGU
-              </Button>
-              <Button
-                onClick={() =>
-                  handleServiceAction("Opening event registration form...")
-                }
-                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground gap-2 h-12"
-                title="Register for community events like Zumba, Pageants, and Health Programs"
-              >
-                <Calendar className="h-4 w-4" />
-                REGISTER Event
-              </Button>
-              <Button
-                onClick={() =>
-                  handleServiceAction("Opening service booking portal...")
-                }
-                className="bg-accent hover:bg-accent/90 text-accent-foreground gap-2 h-12"
-                title="Book appointments for medical consultation, document processing, and more"
-              >
-                <Briefcase className="h-4 w-4" />
-                BOOK Local Service
-              </Button>
-            </div>
-            {selectedService && (
-              <div className="mt-3 p-3 bg-primary/20 rounded text-sm font-semibold text-center">
-                {selectedService}
-              </div>
-            )}
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
