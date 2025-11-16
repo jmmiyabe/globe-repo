@@ -1,7 +1,10 @@
+// components/dashboard/citizen-emergency-prep.tsx
+
 "use client";
 
 import { useState } from "react";
-import { MapPin, AlertTriangle, Navigation, Users, Phone } from "lucide-react";
+import dynamic from 'next/dynamic';
+import { AlertTriangle, Users, Phone } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -20,36 +23,10 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
+// ⬇ Leaflet Map (no functions, just a blank map)
+const SimpleMap = dynamic(() => import("./SimpleMap"), { ssr: false });
+
 export function CitizenEmergencyPrep() {
-  const [openRouteModal, setOpenRouteModal] = useState<number | null>(null);
-
-  const routes = [
-    {
-      name: "Primary Route - North Exit",
-      description: "Main highway exit via main road",
-      status: "safe",
-      distance: "2.5 km",
-      time: "8-12 min",
-      map: "/samplemap.png",
-    },
-    {
-      name: "Secondary Route - East Bypass",
-      description: "Alternative route through residential area",
-      status: "safe",
-      distance: "3.2 km",
-      time: "10-15 min",
-      map: "/samplemap.png",
-    },
-    {
-      name: "Emergency Route - South Back Road",
-      description: "Local back roads for overflow traffic",
-      status: "caution",
-      distance: "4.1 km",
-      time: "12-18 min",
-      map: "/samplemap.png",
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
@@ -79,58 +56,26 @@ export function CitizenEmergencyPrep() {
           </p>
         </div>
 
-        {/* Emergency Routes */}
+        {/* ✅ REPLACED BEST ROUTES WITH A LEAFLET MAP */}
         <Card className="bg-card border-border mb-6">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Navigation className="h-5 w-5 text-secondary" />
-              Best Emergency Routes
+              Leaflet Evacuation Map
             </CardTitle>
             <CardDescription>
-              Recommended evacuation paths during emergencies
+              View the area map for evacuation visualization.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {routes.map((route, i) => (
-              <div
-                key={i}
-                className="p-4 bg-muted rounded-lg border border-border"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className="text-sm font-semibold">{route.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {route.description}
-                    </p>
-                  </div>
-                  <StatusBadge
-                    level={route.status === "safe" ? "safe" : "warning"}
-                    label={route.status.toUpperCase()}
-                  />
-                </div>
-                <div className="grid grid-cols-3 gap-2 text-xs">
-                  <div>
-                    <span className="text-muted-foreground">Distance:</span>
-                    <p className="font-semibold">{route.distance}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Est. Time:</span>
-                    <p className="font-semibold">{route.time}</p>
-                  </div>
-                  <Button
-                    size="sm"
-                    className="bg-primary hover:bg-primary/90"
-                    onClick={() => setOpenRouteModal(i)}
-                  >
-                    View Map
-                  </Button>
-                </div>
-              </div>
-            ))}
+
+          <CardContent>
+            <div className="w-full h-[400px] rounded-lg overflow-hidden border border-border">
+              <SimpleMap />
+            </div>
           </CardContent>
         </Card>
 
-        {/* Evacuation Capacity */}
+        {/* Other sections unchanged */}
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <Card className="bg-card border-border">
             <CardHeader>
@@ -193,7 +138,6 @@ export function CitizenEmergencyPrep() {
             </CardContent>
           </Card>
 
-          {/* Emergency Contacts */}
           <Card className="bg-card border-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -259,30 +203,6 @@ export function CitizenEmergencyPrep() {
           </Card>
         </div>
       </div>
-
-      {/* MODAL for Route Map */}
-      <Dialog
-        open={openRouteModal !== null}
-        onOpenChange={() => setOpenRouteModal(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Route Map</DialogTitle>
-            <DialogDescription>
-              {openRouteModal !== null && (
-                <img
-                  src={routes[openRouteModal].map}
-                  alt={routes[openRouteModal].name}
-                  className="w-full rounded-lg"
-                />
-              )}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button onClick={() => setOpenRouteModal(null)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
